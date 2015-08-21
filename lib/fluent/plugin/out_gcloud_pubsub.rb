@@ -1,3 +1,5 @@
+require 'gcloud'
+
 module Fluent
   class GcloudPubSubOutput < Fluent::BufferedOutput
     Fluent::Plugin.register_output('gcloud_pubsub', self)
