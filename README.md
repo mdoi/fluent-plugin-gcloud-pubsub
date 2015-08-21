@@ -1,6 +1,6 @@
 # fluent-plugin-gcloud-pubsub
 [![Build Status](https://travis-ci.org/mdoi/fluent-plugin-gcloud-pubsub.svg?branch=master)](https://travis-ci.org/mdoi/fluent-plugin-gcloud-pubsub)
-
+[![Gem Version](https://badge.fury.io/rb/fluent-plugin-gcloud-pubsub.svg)](http://badge.fury.io/rb/fluent-plugin-gcloud-pubsub)
 
 ## Overview
 [Cloud Pub/Sub](https://cloud.google.com/pubsub/) Input/Output plugin for [Fluentd](http://www.fluentd.org/) using [gcloud](https://googlecloudplatform.github.io/gcloud-ruby/) gem
