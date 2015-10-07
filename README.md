@@ -3,9 +3,9 @@
 [![Gem Version](https://badge.fury.io/rb/fluent-plugin-gcloud-pubsub.svg)](http://badge.fury.io/rb/fluent-plugin-gcloud-pubsub)
 
 ## Overview
-[Cloud Pub/Sub](https://cloud.google.com/pubsub/) Input/Output plugin for [Fluentd](http://www.fluentd.org/) using [gcloud](https://googlecloudplatform.github.io/gcloud-ruby/) gem
+[Cloud Pub/Sub](https://cloud.google.com/pubsub/) Input/Output plugin for [Fluentd](http://www.fluentd.org/) with [gcloud](https://googlecloudplatform.github.io/gcloud-ruby/) gem
 
-- Publish BufferedOutput chunk into Cloud Pub/Sub using [batch publishing](http://googlecloudplatform.github.io/gcloud-ruby/docs/v0.2.0/Gcloud/Pubsub/Topic.html#method-i-publish)
+- Publish BufferedOutput chunk into Cloud Pub/Sub with [batch publishing](http://googlecloudplatform.github.io/gcloud-ruby/docs/v0.2.0/Gcloud/Pubsub/Topic.html#method-i-publish)
 - [Pull](http://googlecloudplatform.github.io/gcloud-ruby/docs/v0.2.0/Gcloud/Pubsub/Subscription.html#method-i-pull) messages from Cloud Pub/Sub
 
 ## Preparation
