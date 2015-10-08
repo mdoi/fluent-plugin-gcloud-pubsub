@@ -14,6 +14,7 @@ module Fluent
     config_param :project,            :string,  :default => nil
     config_param :topic,              :string,  :default => nil
     config_param :key,                :string,  :default => nil
+    config_param :set_tag_to_attr,    :string,  :default => false
 
     unless method_defined?(:log)
       define_method("log") { $log }
@@ -43,16 +44,12 @@ module Fluent
     end
 
     def write(chunk)
-      messages = []
-
       chunk.msgpack_each do |tag, time, record|
-        messages << record.to_json
-      end
-
-      if messages.length > 0
         @client.publish do |batch|
-          messages.each do |m|
-            batch.publish m
+          if @set_tag_to_attr
+            batch.publish record.to_json, tag: tag
+          else
+            batch.publish record.to_json
           end
         end
       end
