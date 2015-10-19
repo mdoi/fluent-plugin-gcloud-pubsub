@@ -56,9 +56,10 @@ module Fluent
           end
         end
       end
-    rescue
+    rescue => e
       log.error "unexpected error", :error=>$!.to_s
       log.error_backtrace
+      raise e
     end
   end
 end
