@@ -35,9 +35,12 @@ publish dummy json data like `{"message": "dummy", "value": 0}\n{"message": "dum
   topic <YOUR TOPIC>
   key <YOUR KEY>
   flush_interval 10
+  autocreate_topic false
 </match>
 ```
 
+- `autocreate_topic` (optional, default: `false`)
+  - If set to `true`, specified topic will be created when it doesn't exist.
 
 ## Pull messages
 Use `in_gcloud_pubsub`.

@@ -14,6 +14,7 @@ module Fluent
     config_param :project,            :string,  :default => nil
     config_param :topic,              :string,  :default => nil
     config_param :key,                :string,  :default => nil
+    config_param :autocreate_topic,   :bool,    :default => false
 
     unless method_defined?(:log)
       define_method("log") { $log }
@@ -35,7 +36,7 @@ module Fluent
       super
 
       pubsub = (Gcloud.new @project, @key).pubsub
-      @client = pubsub.topic @topic
+      @client = pubsub.topic @topic, autocreate: @autocreate_topic
     end
 
     def format(tag, time, record)
