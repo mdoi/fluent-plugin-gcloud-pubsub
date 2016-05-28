@@ -23,4 +23,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "bundler"
   gem.add_development_dependency "rake"
   gem.add_development_dependency "test-unit"
+  gem.add_development_dependency "test-unit-rr"
 end
