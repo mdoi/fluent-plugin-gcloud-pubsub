@@ -1,7 +1,9 @@
 require 'gcloud'
+require 'fluent/input'
+require 'fluent/parser'
 
 module Fluent
-  class GcloudPubSubInput < Fluent::Input
+  class GcloudPubSubInput < Input
     Fluent::Plugin.register_input('gcloud_pubsub', self)
 
     config_param :tag,                :string
@@ -33,7 +35,7 @@ module Fluent
     end
 
     def configure_parser(conf)
-      @parser = TextParser.new
+      @parser = Fluent::TextParser.new
       @parser.configure(conf)
     end
 
@@ -56,7 +58,7 @@ module Fluent
 
     private
     def configure_parser(conf)
-      @parser = TextParser.new
+      @parser = Fluent::TextParser.new
       @parser.configure(conf)
     end
 
