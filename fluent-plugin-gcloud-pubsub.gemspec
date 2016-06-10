@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.license     = "MIT"
   gem.homepage    = "https://github.com/mdoi/fluent-plugin-gcloud-pubsub"
   gem.summary     = gem.description
-  gem.version     = "0.0.3"
+  gem.version     = "0.0.4"
   gem.authors     = ["Masayuki DOI"]
   gem.email       = "dotquasar@gmail.com"
   gem.has_rdoc    = false
