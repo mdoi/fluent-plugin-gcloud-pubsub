@@ -26,10 +26,8 @@ module Fluent
     def configure(conf)
       super
 
-      raise Fluent::ConfigError, "'project' must be specified." unless @project
       raise Fluent::ConfigError, "'topic' must be specified." unless @topic
       raise Fluent::ConfigError, "'subscription' must be specified." unless @subscription
-      raise Fluent::ConfigError, "'key' must be specified." unless @key
 
       configure_parser(conf)
     end
