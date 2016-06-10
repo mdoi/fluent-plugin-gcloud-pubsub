@@ -1,7 +1,8 @@
 require 'gcloud'
+require 'fluent/output'
 
 module Fluent
-  class GcloudPubSubOutput < Fluent::BufferedOutput
+  class GcloudPubSubOutput < BufferedOutput
     Fluent::Plugin.register_output('gcloud_pubsub', self)
 
     config_set_default :buffer_type,                'lightening'
