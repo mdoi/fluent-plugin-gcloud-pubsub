@@ -16,6 +16,7 @@ module Fluent
     config_param :topic,              :string,  :default => nil
     config_param :key,                :string,  :default => nil
     config_param :autocreate_topic,   :bool,    :default => false
+    config_param :max_messages,       :integer, :default => 1000
 
     unless method_defined?(:log)
       define_method("log") { $log }
@@ -50,16 +51,23 @@ module Fluent
       end
 
       if messages.length > 0
-        @client.publish do |batch|
-          messages.each do |m|
-            batch.publish m
-          end
+        messages.each_slice(@max_messages).each do |msg|
+          publish msg
         end
       end
     rescue => e
       log.error "unexpected error", :error=>$!.to_s
       log.error_backtrace
       raise e
+    end
+
+    def publish(messages)
+      log.debug "send message topic:#{@client.name} length:#{messages.length.to_s}"
+      @client.publish do |batch|
+        messages.each do |m|
+          batch.publish m
+        end
+      end
     end
   end
 end
