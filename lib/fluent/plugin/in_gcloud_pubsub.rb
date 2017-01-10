@@ -1,4 +1,4 @@
-require 'gcloud'
+require 'google/cloud/pubsub'
 require 'fluent/input'
 require 'fluent/parser'
 
@@ -40,7 +40,7 @@ module Fluent
     def start
       super
 
-      pubsub = (Gcloud.new @project, @key).pubsub
+      pubsub = (Google::Cloud::Pubsub.new @project, @key).pubsub
       topic = pubsub.topic @topic
       @client = topic.subscription @subscription
       @stop_subscribing = false
