@@ -34,7 +34,7 @@ module Fluent
     def start
       super
 
-      pubsub = (Google::Cloud::Pubsub.new @project, @key).pubsub
+      pubsub = Google::Cloud::Pubsub.new project: @project, keyfile: @key
       @client = pubsub.topic @topic, autocreate: @autocreate_topic
     end
 
