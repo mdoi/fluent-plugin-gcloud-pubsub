@@ -95,7 +95,8 @@ module Fluent
     end
 
     def convert_line_to_event(line, es)
-      line.chomp!  # remove \n
+      ## line is immutable so we can't modify in place. Our JSON format doesn't have newlines at the end.
+      # line.chomp!  # remove \n
       @parser.parse(line) { |time, record|
         if time && record
           es.add(time, record)
