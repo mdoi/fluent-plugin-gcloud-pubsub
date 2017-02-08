@@ -69,11 +69,11 @@ module Fluent
           unless es.empty?
             begin
               router.emit_stream(@tag, es)
+              @client.acknowledge messages
+              log.debug "#{messages.length} message(s) processed"
             rescue
               # ignore errors. Engine shows logs and backtraces.
             end
-            @client.acknowledge messages
-            log.debug "#{messages.length} message(s) processed"
           end
         end
 
