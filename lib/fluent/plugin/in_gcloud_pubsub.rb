@@ -70,7 +70,7 @@ module Fluent
             begin
               router.emit_stream(@tag, es)
               @client.acknowledge messages
-              log.debug "#{messages.length} message(s) processed"
+              log.info "#{messages.length} message(s) processed"
             rescue
               # ignore errors. Engine shows logs and backtraces.
             end
@@ -84,6 +84,8 @@ module Fluent
     rescue
       log.error "unexpected error", :error=>$!.to_s
       log.error_backtrace
+      log.error "exiting"
+      exit
     end
 
     def parse_messages(messages)
