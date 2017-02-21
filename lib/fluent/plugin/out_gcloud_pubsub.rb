@@ -39,6 +39,9 @@ module Fluent
     end
 
     def format(tag, time, record)
+      if record["timestamp<ts>"]
+	record["timestamp<ts>"] = record["timestamp<ts>"].to_int
+      end
       [tag, time, record].to_msgpack
     end
 
