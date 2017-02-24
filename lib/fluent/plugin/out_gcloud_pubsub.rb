@@ -40,7 +40,9 @@ module Fluent
 
     def format(tag, time, record)
       if record["timestamp<ts>"]
-	record["timestamp<ts>"] = record["timestamp<ts>"].to_int
+	if record["timestamp<ts>"].class == Float
+	  record["timestamp<ts>"] = record["timestamp<ts>"].to_int
+	end
       end
       [tag, time, record].to_msgpack
     end
