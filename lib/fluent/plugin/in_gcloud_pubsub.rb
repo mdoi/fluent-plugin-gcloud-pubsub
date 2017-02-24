@@ -1,4 +1,4 @@
-require 'gcloud'
+require 'google/cloud/pubsub'
 require 'fluent/input'
 require 'fluent/parser'
 
@@ -40,7 +40,7 @@ module Fluent
     def start
       super
 
-      pubsub = (Gcloud.new @project, @key).pubsub
+      pubsub = Google::Cloud::Pubsub.new project: @project, keyfile: @key
       topic = pubsub.topic @topic
       @client = topic.subscription @subscription
       @stop_subscribing = false
@@ -69,11 +69,11 @@ module Fluent
           unless es.empty?
             begin
               router.emit_stream(@tag, es)
+              @client.acknowledge messages
+              log.info "#{messages.length} message(s) processed"
             rescue
               # ignore errors. Engine shows logs and backtraces.
             end
-            @client.acknowledge messages
-            log.debug "#{messages.length} message(s) processed"
           end
         end
 
@@ -84,6 +84,8 @@ module Fluent
     rescue
       log.error "unexpected error", :error=>$!.to_s
       log.error_backtrace
+      log.error "exiting"
+      exit
     end
 
     def parse_messages(messages)
@@ -95,7 +97,8 @@ module Fluent
     end
 
     def convert_line_to_event(line, es)
-      line.chomp!  # remove \n
+      ## line is immutable so we can't modify in place. Our JSON format doesn't have newlines at the end.
+      # line.chomp!  # remove \n
       @parser.parse(line) { |time, record|
         if time && record
           es.add(time, record)

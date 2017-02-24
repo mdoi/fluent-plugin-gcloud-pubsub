@@ -1,4 +1,4 @@
-require 'gcloud'
+require 'google/cloud/pubsub'
 require 'fluent/output'
 
 module Fluent
@@ -8,7 +8,7 @@ module Fluent
     config_set_default :buffer_type,                'lightening'
     config_set_default :flush_interval,             1
     config_set_default :try_flush_interval,         0.05
-    config_set_default :buffer_chunk_records_limit, 900
+    config_set_default :buffer_chunk_records_limit, 100
     config_set_default :buffer_chunk_limit,         9437184
     config_set_default :buffer_queue_limit,         64
 
@@ -34,11 +34,16 @@ module Fluent
     def start
       super
 
-      pubsub = (Gcloud.new @project, @key).pubsub
+      pubsub = Google::Cloud::Pubsub.new project: @project, keyfile: @key
       @client = pubsub.topic @topic, autocreate: @autocreate_topic
     end
 
     def format(tag, time, record)
+      if record["timestamp<ts>"]
+	if record["timestamp<ts>"].class == Float
+	  record["timestamp<ts>"] = record["timestamp<ts>"].to_int
+	end
+      end
       [tag, time, record].to_msgpack
     end
 
