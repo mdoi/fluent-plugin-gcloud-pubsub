@@ -13,7 +13,7 @@ module Fluent
     config_set_default :buffer_queue_limit,         64
 
     config_param :project,            :string,  :default => nil
-    config_param :topic,              :string,  :default => nil
+    config_param :topic,              :string
     config_param :key,                :string,  :default => nil
     config_param :autocreate_topic,   :bool,    :default => false
 
@@ -27,8 +27,6 @@ module Fluent
 
     def configure(conf)
       super
-
-      raise Fluent::ConfigError, "'topic' must be specified." unless @topic
     end
 
     def start
