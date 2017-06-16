@@ -25,14 +25,6 @@ module Fluent::Plugin
       config_set_default :queue_limit_length,  64
     end
 
-    unless method_defined?(:log)
-      define_method("log") { $log }
-    end
-
-    unless method_defined?(:router)
-      define_method("router") { Fluent::Engine }
-    end
-
     def configure(conf)
       compat_parameters_convert(conf, :buffer)
       super
