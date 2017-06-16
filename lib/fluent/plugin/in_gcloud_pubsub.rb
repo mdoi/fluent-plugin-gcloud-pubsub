@@ -1,10 +1,12 @@
 require 'gcloud'
-require 'fluent/input'
-require 'fluent/parser'
+require 'fluent/plugin/input'
+require 'fluent/plugin/parser'
 
-module Fluent
+module Fluent::Plugin
   class GcloudPubSubInput < Input
     Fluent::Plugin.register_input('gcloud_pubsub', self)
+
+    helpers :parser, :thread
 
     config_param :tag,                :string
     config_param :project,            :string,  :default => nil
@@ -14,6 +16,10 @@ module Fluent
     config_param :pull_interval,      :integer, :default => 5
     config_param :max_messages,       :integer, :default => 100
     config_param :return_immediately, :bool,    :default => true
+
+    config_section :parse do
+      config_set_default :@type, 'json'
+    end
 
     unless method_defined?(:log)
       define_method("log") { $log }
@@ -30,8 +36,7 @@ module Fluent
     end
 
     def configure_parser(conf)
-      @parser = Fluent::TextParser.new
-      @parser.configure(conf)
+      @parser = parser_create
     end
 
     def start
@@ -41,7 +46,7 @@ module Fluent
       topic = pubsub.topic @topic
       @client = topic.subscription @subscription
       @stop_subscribing = false
-      @subscribe_thread = Thread.new(&method(:subscribe))
+      @subscribe_thread = thread_create(:in_gcloud_pubsub_input, &method(:subscribe))
     end
 
     def shutdown
@@ -52,10 +57,6 @@ module Fluent
     end
 
     private
-    def configure_parser(conf)
-      @parser = Fluent::TextParser.new
-      @parser.configure(conf)
-    end
 
     def subscribe
       until @stop_subscribing
@@ -84,7 +85,7 @@ module Fluent
     end
 
     def parse_messages(messages)
-      es = MultiEventStream.new
+      es = Fluent::MultiEventStream.new
       messages.each do |m|
         convert_line_to_event(m.message.data, es)
       end
