@@ -21,14 +21,6 @@ module Fluent::Plugin
       config_set_default :@type, 'json'
     end
 
-    unless method_defined?(:log)
-      define_method("log") { $log }
-    end
-
-    unless method_defined?(:router)
-      define_method("router") { Fluent::Engine }
-    end
-
     def configure(conf)
       super
 
