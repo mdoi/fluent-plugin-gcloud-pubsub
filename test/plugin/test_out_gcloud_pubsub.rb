@@ -1,5 +1,5 @@
 require_relative "../test_helper"
-
+require 'fluent/test/driver/output'
 
 class GcloudPubSubOutputTest < Test::Unit::TestCase
   DEFAULT_CONFIG = <<-EOC
@@ -16,7 +16,7 @@ class GcloudPubSubOutputTest < Test::Unit::TestCase
   end
 
   def create_driver(conf)
-    Fluent::Test::BufferedOutputTestDriver.new(Fluent::GcloudPubSubOutput).configure(conf)
+    Fluent::Test::Driver::Output.new(Fluent::Plugin::GcloudPubSubOutput).configure(conf)
   end
 
   def test_configure
@@ -32,7 +32,7 @@ class GcloudPubSubOutputTest < Test::Unit::TestCase
     assert_equal('topic-test', d.instance.topic)
     assert_equal('key-test', d.instance.key)
     assert_equal(false, d.instance.autocreate_topic)
-    assert_equal(1, d.instance.flush_interval)
+    assert_equal(1, d.instance.buffer_config.flush_interval)
   end
 
   def test_autocreate_topic
@@ -47,7 +47,9 @@ class GcloudPubSubOutputTest < Test::Unit::TestCase
 
     assert_equal(true, d.instance.autocreate_topic)
 
-    chunk = Fluent::MemoryBufferChunk.new('key', 'data')
+    tag, time, record = "tag", Fluent::Engine.now, {"a" => "b"}
+    metadata = d.instance.metadata_for_test(tag, time, record)
+    chunk = d.instance.buffer.generate_chunk(metadata)
     client = mock!
     client.topic("topic-test", autocreate: true).once
 
@@ -61,7 +63,13 @@ class GcloudPubSubOutputTest < Test::Unit::TestCase
 
   def test_re_raise_errors
     d = create_driver(DEFAULT_CONFIG)
-    chunk = Fluent::MemoryBufferChunk.new('key', 'data')
+    tag, time, record = "tag", Fluent::Engine.now, {"a" => "b"}
+    metadata = d.instance.metadata_for_test(tag, time, record)
+    chunk = d.instance.buffer.generate_chunk(metadata).tap do |c|
+      c.append([d.instance.format(tag, time, record)])
+    end
+    chunk.extend Fluent::ChunkMessagePackEventStreamer
+
     client = Object.new
     def client.publish
       raise ReRaisedError
