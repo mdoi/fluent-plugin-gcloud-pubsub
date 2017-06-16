@@ -68,6 +68,7 @@ class GcloudPubSubOutputTest < Test::Unit::TestCase
     chunk = d.instance.buffer.generate_chunk(metadata).tap do |c|
       c.append([d.instance.format(tag, time, record)])
     end
+    # For chunk#msgpack_each
     chunk.extend Fluent::ChunkMessagePackEventStreamer
 
     client = Object.new
