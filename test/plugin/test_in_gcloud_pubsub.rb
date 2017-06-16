@@ -1,5 +1,5 @@
 require_relative "../test_helper"
-
+require 'fluent/test/driver/input'
 
 class GcloudPubSubInputTest < Test::Unit::TestCase
   def setup
@@ -7,7 +7,7 @@ class GcloudPubSubInputTest < Test::Unit::TestCase
   end
 
   def create_driver(conf=CONFIG)
-    Fluent::Test::InputTestDriver.new(Fluent::GcloudPubSubInput).configure(conf)
+    Fluent::Test::Driver::Input.new(Fluent::Plugin::GcloudPubSubInput).configure(conf)
   end
 
   def test_configure

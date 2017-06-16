@@ -1,34 +1,33 @@
 require 'gcloud'
-require 'fluent/output'
+require 'fluent/plugin/output'
 
-module Fluent
-  class GcloudPubSubOutput < BufferedOutput
+module Fluent::Plugin
+  class GcloudPubSubOutput < Output
     Fluent::Plugin.register_output('gcloud_pubsub', self)
 
-    config_set_default :buffer_type,                'lightening'
-    config_set_default :flush_interval,             1
-    config_set_default :try_flush_interval,         0.05
-    config_set_default :buffer_chunk_records_limit, 900
-    config_set_default :buffer_chunk_limit,         9437184
-    config_set_default :buffer_queue_limit,         64
+    helpers :compat_parameters
+
+    DEFAULT_BUFFER_TYPE = "memory"
 
     config_param :project,            :string,  :default => nil
-    config_param :topic,              :string,  :default => nil
+    config_param :topic,              :string
     config_param :key,                :string,  :default => nil
     config_param :autocreate_topic,   :bool,    :default => false
 
-    unless method_defined?(:log)
-      define_method("log") { $log }
-    end
-
-    unless method_defined?(:router)
-      define_method("router") { Fluent::Engine }
+    config_section :buffer do
+      config_set_default :@type, DEFAULT_BUFFER_TYPE
+      # In v0.14, buffer configurations are renamed.
+      # see: https://github.com/fluent/fluentd/blob/master/lib/fluent/plugin/buffer.rb
+      config_set_default :flush_interval,      1
+      config_set_default :try_flush_interval,  0.05
+      config_set_default :chunk_limit_records, 900
+      config_set_default :chunk_limit_size,    9437184
+      config_set_default :queue_limit_length,  64
     end
 
     def configure(conf)
+      compat_parameters_convert(conf, :buffer)
       super
-
-      raise Fluent::ConfigError, "'topic' must be specified." unless @topic
     end
 
     def start
@@ -40,6 +39,14 @@ module Fluent
 
     def format(tag, time, record)
       [tag, time, record].to_msgpack
+    end
+
+    def formatted_to_msgpack_binary?
+      true
+    end
+
+    def multi_workers_ready?
+      true
     end
 
     def write(chunk)
